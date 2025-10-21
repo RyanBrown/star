@@ -1,9 +1,14 @@
 #!/usr/bin/env -S node --enable-source-maps
-import { createServer } from "node:http";
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 const PORT = 8787;
 
-function send(res, status, data, headers = {}) {
+function send(
+  res: ServerResponse,
+  status: number,
+  data: unknown,
+  headers: Record<string, string> = {}
+) {
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "access-control-allow-origin": "*",
@@ -12,14 +17,14 @@ function send(res, status, data, headers = {}) {
   res.end(data ? JSON.stringify(data) : "");
 }
 
-function sendNoContent(res) {
+function sendNoContent(res: ServerResponse) {
   res.writeHead(204, {
     "access-control-allow-origin": "*",
   });
   res.end();
 }
 
-function handleCors(req, res) {
+function handleCors(req: IncomingMessage, res: ServerResponse): boolean {
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
       "access-control-allow-origin": "*",
@@ -32,12 +37,43 @@ function handleCors(req, res) {
   return false;
 }
 
-function toNumber(v, def = 0) {
+function toNumber(v: unknown, def = 0): number {
   const n = typeof v === "string" ? Number(v) : Number(v);
   return Number.isFinite(n) ? n : def;
 }
 
-function estimate(payload) {
+type EstimateInput = {
+  age?: number;
+  retirementAge?: number;
+  annualSalary?: number;
+  currentSavings?: number;
+  annualContributionPct?: number;
+  employerMatch?: boolean;
+  matchUpToPct?: number;
+  matchRatePct?: number;
+  assumedAnnualReturnPct?: number;
+};
+
+type EstimatePoint = {
+  year: number;
+  age: number;
+  startBalance: number;
+  employeeContribution: number;
+  employerMatch: number;
+  growth: number;
+  endBalance: number;
+};
+
+type EstimateSummary = {
+  years: number;
+  endingBalance: number;
+  totalEmployeeContrib: number;
+  totalEmployerMatch: number;
+};
+
+type EstimateResult = { summary: EstimateSummary; points: EstimatePoint[] };
+
+function estimate(payload: EstimateInput): EstimateResult {
   const age = toNumber(payload.age);
   const retirementAge = toNumber(payload.retirementAge);
   const annualSalary = toNumber(payload.annualSalary);
@@ -49,7 +85,7 @@ function estimate(payload) {
   const annualReturn = toNumber(payload.assumedAnnualReturnPct);
 
   const years = Math.max(0, Math.round(retirementAge - age));
-  const rows = [];
+  const rows: EstimatePoint[] = [];
   let start = Math.max(0, currentSavings);
   let totalEmployeeContrib = 0;
   let totalEmployerMatch = 0;
@@ -79,7 +115,7 @@ function estimate(payload) {
     start = end;
   }
 
-  const summary = {
+  const summary: EstimateSummary = {
     years,
     endingBalance: Math.round(start),
     totalEmployeeContrib: Math.round(totalEmployeeContrib),
@@ -89,24 +125,24 @@ function estimate(payload) {
   return { summary, points: rows };
 }
 
-const server = createServer(async (req, res) => {
+const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
   try {
     if (handleCors(req, res)) return;
 
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
 
     if (req.method === "POST" && url.pathname === "/mock-estimate") {
-      const chunks = [];
-      for await (const chunk of req) chunks.push(chunk);
+      const chunks: Buffer[] = [];
+      for await (const chunk of req) chunks.push(chunk as Buffer);
       const raw = Buffer.concat(chunks).toString("utf8");
-      let json;
+      let json: unknown;
       try {
         json = raw ? JSON.parse(raw) : {};
       } catch {
         send(res, 400, { error: "Invalid JSON" });
         return;
       }
-      const result = estimate(json || {});
+      const result = estimate((json as EstimateInput) || {});
       send(res, 200, result);
       return;
     }

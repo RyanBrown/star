@@ -2,6 +2,25 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./star.css";
 
+/**
+ * @typedef {Object} Point
+ * @property {number} year
+ * @property {number} age
+ * @property {number} startBalance
+ * @property {number} employeeContribution
+ * @property {number} employerMatch
+ * @property {number} growth
+ * @property {number} endBalance
+ */
+
+/**
+ * @typedef {Object} Summary
+ * @property {number} years
+ * @property {number} endingBalance
+ * @property {number} totalEmployeeContrib
+ * @property {number} totalEmployerMatch
+ */
+
 // Minimal utilities for currency formatting and canvas chart rendering
 function currency(n) {
   return Number(n).toLocaleString(undefined, {
@@ -31,6 +50,10 @@ function parseCurrencyToNumber(str) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+/**
+ * @param {HTMLCanvasElement} canvas
+ * @param {Point[]} series
+ */
 function drawChart(canvas, series) {
   // Simple line chart using CSS variables for theme-aware colors
   const ctx = canvas.getContext("2d");
@@ -87,11 +110,14 @@ function App() {
   const [matchRatePct, setMatchRatePct] = React.useState("");
 
   // Results state
-  const [rows, setRows] = React.useState([]); // points
+  /** @type {[Point[], React.Dispatch<React.SetStateAction<Point[]>>]} */
+  const [rows, setRows] = React.useState([]);
+  /** @type {[Summary|null, React.Dispatch<React.SetStateAction<Summary|null>>]} */
   const [summary, setSummary] = React.useState(null);
   const [isEstimating, setIsEstimating] = React.useState(false);
 
   // Canvas ref
+  /** @type {React.MutableRefObject<HTMLCanvasElement|null>} */
   const canvasRef = React.useRef(null);
 
   function fillDefaults() {
@@ -132,6 +158,19 @@ function App() {
     }
   }, [rows]);
 
+  /**
+   * @returns {{
+   *   age: number;
+   *   retirementAge: number;
+   *   annualSalary: number;
+   *   currentSavings: number;
+   *   annualContributionPct: number;
+   *   employerMatch: boolean;
+   *   matchUpToPct: number;
+   *   matchRatePct: number;
+   *   assumedAnnualReturnPct: number;
+   * }}
+   */
   function buildPayloadFromForm() {
     // Convert UI strings to numbers; interpret percentages as fractions
     return {
@@ -187,6 +226,10 @@ function App() {
   }
 
   // Currency input helpers
+  /**
+   * @param {string} value
+   * @param {(next: string) => void} setValue
+   */
   function onCurrencyBlur(value, setValue) {
     // Format valid numbers; keep empty string if user cleared the input
     const n = parseCurrencyToNumber(value);
