@@ -72,20 +72,16 @@ function drawChart(canvas, series) {
 }
 
 function App() {
-  // Form state
-  const [age, setAge] = React.useState(35);
-  const [retirementAge, setRetirementAge] = React.useState(65);
-  const [annualSalaryInput, setAnnualSalaryInput] = React.useState(
-    formatCurrencyUSD2(120000)
-  );
-  const [currentSavingsInput, setCurrentSavingsInput] = React.useState(
-    formatCurrencyUSD2(50000)
-  );
-  const [annualContributionPct, setAnnualContributionPct] = React.useState(10);
-  const [assumedAnnualReturnPct, setAssumedAnnualReturnPct] = React.useState(6);
+  // Form state (defaults unset/blank)
+  const [age, setAge] = React.useState("");
+  const [retirementAge, setRetirementAge] = React.useState("");
+  const [annualSalaryInput, setAnnualSalaryInput] = React.useState("");
+  const [currentSavingsInput, setCurrentSavingsInput] = React.useState("");
+  const [annualContributionPct, setAnnualContributionPct] = React.useState("");
+  const [assumedAnnualReturnPct, setAssumedAnnualReturnPct] = React.useState("");
   const [employerMatchEnabled, setEmployerMatchEnabled] = React.useState(true);
-  const [matchUpToPct, setMatchUpToPct] = React.useState(6);
-  const [matchRatePct, setMatchRatePct] = React.useState(5);
+  const [matchUpToPct, setMatchUpToPct] = React.useState("");
+  const [matchRatePct, setMatchRatePct] = React.useState("");
 
   // Results state
   const [rows, setRows] = React.useState([]); // points
@@ -192,8 +188,9 @@ function App() {
             name="age"
             type="number"
             min="0"
+            placeholder="e.g., 35"
             value={age}
-            onChange={(e) => setAge(e.target.value === "" ? 0 : Number(e.target.value))}
+            onChange={(e) => setAge(e.target.value)}
           />
         </div>
         <div className="mds-field">
@@ -204,8 +201,9 @@ function App() {
             name="retirementAge"
             type="number"
             min="0"
+            placeholder="e.g., 65"
             value={retirementAge}
-            onChange={(e) => setRetirementAge(e.target.value === "" ? 0 : Number(e.target.value))}
+            onChange={(e) => setRetirementAge(e.target.value)}
           />
           <div className="mds-footnote">We&apos;ll mark this on the chart.</div>
         </div>
@@ -217,6 +215,7 @@ function App() {
             name="annualSalary"
             type="text"
             inputMode="decimal"
+            placeholder="$120,000.00"
             value={annualSalaryInput}
             onChange={(e) => setAnnualSalaryInput(e.target.value)}
             onBlur={() => onCurrencyBlur(annualSalaryInput, setAnnualSalaryInput)}
@@ -231,6 +230,7 @@ function App() {
             name="currentSavings"
             type="text"
             inputMode="decimal"
+            placeholder="$50,000.00"
             value={currentSavingsInput}
             onChange={(e) => setCurrentSavingsInput(e.target.value)}
             onBlur={() => onCurrencyBlur(currentSavingsInput, setCurrentSavingsInput)}
@@ -248,8 +248,9 @@ function App() {
             min="0"
             max="100"
             step="1"
+            placeholder="e.g., 10"
             value={annualContributionPct}
-            onChange={(e) => setAnnualContributionPct(e.target.value === "" ? 0 : Number(e.target.value))}
+            onChange={(e) => setAnnualContributionPct(e.target.value)}
           />
         </div>
         <div className="mds-field">
@@ -262,8 +263,9 @@ function App() {
             min="0"
             max="20"
             step="0.5"
+            placeholder="e.g., 6"
             value={assumedAnnualReturnPct}
-            onChange={(e) => setAssumedAnnualReturnPct(e.target.value === "" ? 0 : Number(e.target.value))}
+            onChange={(e) => setAssumedAnnualReturnPct(e.target.value)}
           />
         </div>
 
@@ -284,7 +286,7 @@ function App() {
           </div>
         </div>
         {employerMatchEnabled && (
-          <>
+          <div className="antialiased w-full text-black bg-black/3 dark:bg-white/3 rounded-lg p-3">
             <div className="mds-field">
               <label className="mds-label" htmlFor="matchUpToPct">Matches up to (% of salary)</label>
               <input
@@ -295,8 +297,9 @@ function App() {
                 min="0"
                 max="100"
                 step="1"
+                placeholder="e.g., 6"
                 value={matchUpToPct}
-                onChange={(e) => setMatchUpToPct(e.target.value === "" ? 0 : Number(e.target.value))}
+                onChange={(e) => setMatchUpToPct(e.target.value)}
               />
             </div>
             <div className="mds-field">
@@ -309,11 +312,12 @@ function App() {
                 min="0"
                 max="200"
                 step="1"
+                placeholder="e.g., 5"
                 value={matchRatePct}
-                onChange={(e) => setMatchRatePct(e.target.value === "" ? 0 : Number(e.target.value))}
+                onChange={(e) => setMatchRatePct(e.target.value)}
               />
             </div>
-          </>
+          </div>
         )}
       </form>
 
