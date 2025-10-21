@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./star.css";
 
-// Utilities ported from star.js
+// Minimal utilities for currency formatting and canvas chart rendering
 function currency(n) {
   return Number(n).toLocaleString(undefined, {
     style: "currency",
@@ -12,6 +12,7 @@ function currency(n) {
 }
 
 function formatCurrencyUSD2(value) {
+  // Return empty string for non-numeric inputs so empty fields stay blank
   const num = typeof value === "string" ? Number(value) : value;
   if (!Number.isFinite(num)) return "";
   return new Intl.NumberFormat(undefined, {
@@ -23,6 +24,7 @@ function formatCurrencyUSD2(value) {
 }
 
 function parseCurrencyToNumber(str) {
+  // Strip formatting (e.g., $, commas) and parse to number; fallback to 0
   if (typeof str !== "string") return Number(str);
   const cleaned = str.replace(/[^0-9.]/g, "");
   const parsed = parseFloat(cleaned);
@@ -30,6 +32,7 @@ function parseCurrencyToNumber(str) {
 }
 
 function drawChart(canvas, series) {
+  // Simple line chart using CSS variables for theme-aware colors
   const ctx = canvas.getContext("2d");
   const w = (canvas.width = canvas.clientWidth);
   const h = (canvas.height = canvas.clientHeight);
@@ -72,7 +75,7 @@ function drawChart(canvas, series) {
 }
 
 function App() {
-  // Form state (defaults unset/blank)
+  // Form state (defaults unset/blank; blanks coerce to 0 when building payload)
   const [age, setAge] = React.useState("");
   const [retirementAge, setRetirementAge] = React.useState("");
   const [annualSalaryInput, setAnnualSalaryInput] = React.useState("");
@@ -92,6 +95,7 @@ function App() {
   const canvasRef = React.useRef(null);
 
   function fillDefaults() {
+    // Populate sample inputs for quick testing
     setAge("35");
     setRetirementAge("65");
     setAnnualSalaryInput(formatCurrencyUSD2(120000));
@@ -103,7 +107,7 @@ function App() {
     setMatchRatePct("5");
   }
 
-  // Hydrate from Apps host payload if present
+  // Hydrate from Apps host payload if present (ChatGPT Developer Mode)
   React.useEffect(() => {
     const incoming = window.OPENAI_WIDGET_DATA || null;
     if (incoming && incoming.points && incoming.summary) {
@@ -116,7 +120,7 @@ function App() {
     }
   }, []);
 
-  // Draw chart when rows change
+  // Redraw the chart whenever the data rows change
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -129,6 +133,7 @@ function App() {
   }, [rows]);
 
   function buildPayloadFromForm() {
+    // Convert UI strings to numbers; interpret percentages as fractions
     return {
       age: Number(age) || 0,
       retirementAge: Number(retirementAge) || 0,
@@ -143,12 +148,13 @@ function App() {
   }
 
   async function handleEstimate() {
-    // Apps host will handle this via data-call-tool
+    // In ChatGPT, the Apps host handles this via data-call-tool; skip local fetch
     if (window.OPENAI_WIDGET_DATA) return;
 
     setIsEstimating(true);
     const payload = buildPayloadFromForm();
     try {
+      // Local preview endpoint for running outside ChatGPT
       const res = await fetch("http://localhost:8787/mock-estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -158,6 +164,7 @@ function App() {
       setSummary(json.summary || null);
       setRows(Array.isArray(json.points) ? json.points : []);
       try {
+        // Best-effort preference save; non-fatal
         fetch("/storage/prefs", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -174,12 +181,14 @@ function App() {
   }
 
   function handleReset() {
+    // Clear results without mutating current inputs
     setRows([]);
     setSummary(null);
   }
 
   // Currency input helpers
   function onCurrencyBlur(value, setValue) {
+    // Format valid numbers; keep empty string if user cleared the input
     const n = parseCurrencyToNumber(value);
     setValue(n || n === 0 ? formatCurrencyUSD2(n) : "");
   }
@@ -307,6 +316,7 @@ function App() {
           </div>
         </div>
         {employerMatchEnabled && (
+          // Group employer match fields in a lightly elevated section
           <div className="antialiased w-full text-black bg-black/3 dark:bg-white/3 rounded-lg p-3">
             <div className="mds-field">
               <label className="mds-label" htmlFor="matchUpToPct">Matches up to (% of salary)</label>
