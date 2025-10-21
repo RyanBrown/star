@@ -115,6 +115,8 @@ function App() {
   /** @type {[Summary|null, React.Dispatch<React.SetStateAction<Summary|null>>]} */
   const [summary, setSummary] = React.useState(null);
   const [isEstimating, setIsEstimating] = React.useState(false);
+  /** @type {[ReturnType<typeof buildPayloadFromForm>|null, React.Dispatch<React.SetStateAction<ReturnType<typeof buildPayloadFromForm>|null>>]} */
+  const [lastEstimated, setLastEstimated] = React.useState(null);
 
   // Canvas ref
   /** @type {React.MutableRefObject<HTMLCanvasElement|null>} */
@@ -142,6 +144,10 @@ function App() {
       // Best-effort: ping storage
       try {
         fetch("/storage/estimates", { method: "GET" });
+      } catch { }
+      // Establish baseline so button shows Re-estimate after edits
+      try {
+        setLastEstimated(buildPayloadFromForm());
       } catch { }
     }
   }, []);
@@ -202,6 +208,7 @@ function App() {
       const json = await res.json();
       setSummary(json.summary || null);
       setRows(Array.isArray(json.points) ? json.points : []);
+      setLastEstimated(payload);
       try {
         // Best-effort preference save; non-fatal
         fetch("/storage/prefs", {
@@ -220,9 +227,17 @@ function App() {
   }
 
   function handleReset() {
-    // Clear results without mutating current inputs
+    // Clear results and reset all fields except age and retirement age
     setRows([]);
     setSummary(null);
+    setAnnualSalaryInput("");
+    setCurrentSavingsInput("");
+    setAnnualContributionPct("");
+    setAssumedAnnualReturnPct("");
+    setEmployerMatchEnabled(false);
+    setMatchUpToPct("");
+    setMatchRatePct("");
+    setLastEstimated(null);
   }
 
   // Currency input helpers
@@ -404,7 +419,7 @@ function App() {
           onClick={handleEstimate}
           disabled={isEstimating}
         >
-          Estimate
+          {lastEstimated && (JSON.stringify(buildPayloadFromForm()) !== JSON.stringify(lastEstimated)) ? "Re-estimate" : "Estimate"}
         </button>
         <button id="resetBtn" className="mds-btn" type="button" onClick={handleReset}>Reset</button>
       </div>
