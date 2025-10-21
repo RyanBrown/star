@@ -121,6 +121,15 @@ const widgets: PizzazWidget[] = [
     html: readWidgetHtml("pizzaz-list"),
     responseText: "Rendered a pizza list!",
   },
+  {
+    id: "star",
+    title: "Retirement Estimator",
+    templateUri: "ui://widget/star.html",
+    invoking: "Preparing estimator…",
+    invoked: "Estimator ready.",
+    html: readWidgetHtml("star"),
+    responseText: "Rendered retirement estimator!",
+  },
 ];
 
 const widgetsById = new Map<string, PizzazWidget>();
@@ -147,7 +156,7 @@ const toolInputParser = z.object({
   pizzaTopping: z.string(),
 });
 
-const tools: Tool[] = widgets.map((widget) => ({
+const widgetTools: Tool[] = widgets.map((widget) => ({
   name: widget.id,
   description: widget.title,
   inputSchema: toolInputSchema,
@@ -160,6 +169,108 @@ const tools: Tool[] = widgets.map((widget) => ({
     readOnlyHint: true,
   },
 }));
+
+// Star estimate tool (hydrates the star widget)
+const estimateInputSchema = {
+  type: "object",
+  properties: {
+    age: { type: "number" },
+    retirementAge: { type: "number" },
+    annualSalary: { type: "number" },
+    currentSavings: { type: "number" },
+    annualContributionPct: { type: "number" },
+    employerMatch: { type: "boolean" },
+    matchUpToPct: { type: "number" },
+    matchRatePct: { type: "number" },
+    assumedAnnualReturnPct: { type: "number" },
+  },
+  required: ["age", "retirementAge"],
+  additionalProperties: true,
+} as const;
+
+const estimateInputParser = z.object({
+  age: z.number(),
+  retirementAge: z.number(),
+  annualSalary: z.number().optional().default(0),
+  currentSavings: z.number().optional().default(0),
+  annualContributionPct: z.number().optional().default(0),
+  employerMatch: z.boolean().optional().default(false),
+  matchUpToPct: z.number().optional().default(0),
+  matchRatePct: z.number().optional().default(0),
+  assumedAnnualReturnPct: z.number().optional().default(0),
+});
+
+function estimate(payload: z.infer<typeof estimateInputParser>) {
+  const age = payload.age;
+  const retirementAge = payload.retirementAge;
+  const annualSalary = payload.annualSalary;
+  const currentSavings = payload.currentSavings;
+  const contribPct = payload.annualContributionPct;
+  const employerMatch = !!payload.employerMatch;
+  const matchUpToPct = payload.matchUpToPct;
+  const matchRatePct = payload.matchRatePct;
+  const annualReturn = payload.assumedAnnualReturnPct;
+
+  const years = Math.max(0, Math.round(retirementAge - age));
+  const points: Array<{
+    year: number;
+    age: number;
+    startBalance: number;
+    employeeContribution: number;
+    employerMatch: number;
+    growth: number;
+    endBalance: number;
+  }> = [];
+  let start = Math.max(0, currentSavings);
+  let totalEmployeeContrib = 0;
+  let totalEmployerMatch = 0;
+
+  for (let i = 0; i < years; i++) {
+    const year = i + 1;
+    const ageThisYear = age + year;
+    const employeeContribution = Math.max(0, annualSalary * contribPct);
+    const cappedPct = Math.min(contribPct, matchUpToPct);
+    const employerBase = Math.max(0, annualSalary * cappedPct);
+    const employer = employerMatch ? employerBase * matchRatePct : 0;
+    const growth = Math.max(0, (start + employeeContribution + employer) * annualReturn);
+    const end = start + employeeContribution + employer + growth;
+
+    points.push({
+      year,
+      age: ageThisYear,
+      startBalance: Math.round(start),
+      employeeContribution: Math.round(employeeContribution),
+      employerMatch: Math.round(employer),
+      growth: Math.round(growth),
+      endBalance: Math.round(end),
+    });
+
+    totalEmployeeContrib += employeeContribution;
+    totalEmployerMatch += employer;
+    start = end;
+  }
+
+  const summary = {
+    years,
+    endingBalance: Math.round(start),
+    totalEmployeeContrib: Math.round(totalEmployeeContrib),
+    totalEmployerMatch: Math.round(totalEmployerMatch),
+  };
+
+  return { summary, points };
+}
+
+const starWidget = widgetsById.get("star");
+const estimateTool: Tool = {
+  name: "estimate_retirement",
+  title: "Estimate Retirement",
+  description: "Compute a retirement projection and render the estimator UI",
+  inputSchema: estimateInputSchema,
+  _meta: starWidget ? widgetMeta(starWidget) : ({} as any),
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+};
+
+const tools: Tool[] = [...widgetTools, estimateTool];
 
 const resources: Resource[] = widgets.map((widget) => ({
   uri: widget.templateUri,
@@ -237,24 +348,23 @@ function createPizzazServer(): Server {
   server.setRequestHandler(
     CallToolRequestSchema,
     async (request: CallToolRequest) => {
-      const widget = widgetsById.get(request.params.name);
-
-      if (!widget) {
-        throw new Error(`Unknown tool: ${request.params.name}`);
+      if (request.params.name === "estimate_retirement") {
+        if (!starWidget) throw new Error("Star widget not registered");
+        const args = estimateInputParser.parse(request.params.arguments ?? {});
+        const result = estimate(args);
+        return {
+          content: [],
+          structuredContent: result,
+          _meta: widgetMeta(starWidget),
+        };
       }
 
+      const widget = widgetsById.get(request.params.name);
+      if (!widget) throw new Error(`Unknown tool: ${request.params.name}`);
       const args = toolInputParser.parse(request.params.arguments ?? {});
-
       return {
-        content: [
-          {
-            type: "text",
-            text: widget.responseText,
-          },
-        ],
-        structuredContent: {
-          pizzaTopping: args.pizzaTopping,
-        },
+        content: [{ type: "text", text: widget.responseText }],
+        structuredContent: { pizzaTopping: args.pizzaTopping },
         _meta: widgetMeta(widget),
       };
     }
