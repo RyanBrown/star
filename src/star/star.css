@@ -252,17 +252,17 @@ body {
 
 /* Responsive behavior */
 @media (max-width: 900px) {
-    .star-form {
+    .mds-form {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 @media (max-width: 600px) {
-    .star-form {
+    .mds-form {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 @media (max-width: 420px) {
-    .star-form {
+    .mds-form {
         grid-template-columns: 1fr;
     }
 }
