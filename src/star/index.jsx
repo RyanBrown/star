@@ -254,7 +254,7 @@ function App() {
   return (
     <div className="mds-card" data-widget="star-retirement">
       <div className="mds-header">
-        <div className="mds-title">Retirement Estimator</div>
+        <div className="mds-title" id="star-title">Retirement Estimator</div>
         <div className="flex items-center gap-2">
           <div className="mds-badge">ChatGPT-native UI</div>
           <button
@@ -267,7 +267,7 @@ function App() {
         </div>
       </div>
 
-      <form id="star-form" className="mds-form" onSubmit={(e) => e.preventDefault()}>
+      <form id="star-form" className="mds-form" aria-labelledby="star-title" onSubmit={(e) => e.preventDefault()}>
         <div className="mds-field">
           <label className="mds-label" htmlFor="age">Current Age</label>
           <input
@@ -292,8 +292,9 @@ function App() {
             placeholder="e.g., 65"
             value={retirementAge}
             onChange={(e) => setRetirementAge(e.target.value)}
+            aria-describedby="retire-note"
           />
-          <div className="mds-footnote">We&apos;ll mark this on the chart.</div>
+          <div className="mds-footnote" id="retire-note">We'll mark this on the chart.</div>
         </div>
         <div className="mds-field">
           <label className="mds-label" htmlFor="annualSalary">Annual Salary (USD)</label>
@@ -323,8 +324,9 @@ function App() {
             onChange={(e) => setCurrentSavingsInput(e.target.value)}
             onBlur={() => onCurrencyBlur(currentSavingsInput, setCurrentSavingsInput)}
             onFocus={(e) => e.currentTarget.select()}
+            aria-describedby="savings-note"
           />
-          <div className="mds-footnote">401(k), IRA, etc.</div>
+          <div className="mds-footnote" id="savings-note">401(k), IRA, etc.</div>
         </div>
         <div className="mds-field">
           <label className="mds-label" htmlFor="annualContributionPct">Employee Contribution (% of salary)</label>
@@ -375,7 +377,8 @@ function App() {
         </div>
         {employerMatchEnabled && (
           // Group employer match fields in a lightly elevated section
-          <div className="antialiased w-full text-black bg-black/3 dark:bg-white/3 rounded-lg p-3">
+          <fieldset className="antialiased w-full text-black bg-black/3 dark:bg-white/3 rounded-lg p-3" aria-labelledby="employer-match-legend">
+            <legend id="employer-match-legend" className="mds-label">Employer match options</legend>
             <div className="mds-field">
               <label className="mds-label" htmlFor="matchUpToPct">Matches up to (% of salary)</label>
               <input
@@ -406,7 +409,7 @@ function App() {
                 onChange={(e) => setMatchRatePct(e.target.value)}
               />
             </div>
-          </div>
+          </fieldset>
         )}
       </form>
 
@@ -435,22 +438,23 @@ function App() {
         )}
       </div>
 
-      <div className={"mds-chart " + (rows.length === 0 ? "hidden" : "")}>
-        <canvas id="chart" ref={canvasRef}></canvas>
+      <div className={"mds-chart " + (rows.length === 0 ? "hidden" : "")} aria-hidden={rows.length === 0}>
+        <canvas id="chart" ref={canvasRef} role="img" aria-label="Retirement savings projection line chart"></canvas>
       </div>
 
       <table id="table" className="mds-table" role="table" aria-label="Retirement projection table">
         {rows.length > 0 && (
           <>
+            <caption className="mds-footnote">Annual balances and contributions by year</caption>
             <thead>
               <tr>
-                <th>Year</th>
-                <th>Age</th>
-                <th>Start</th>
-                <th>Employee</th>
-                <th>Employer</th>
-                <th>Growth</th>
-                <th>End</th>
+                <th scope="col">Year</th>
+                <th scope="col">Age</th>
+                <th scope="col">Start</th>
+                <th scope="col">Employee</th>
+                <th scope="col">Employer</th>
+                <th scope="col">Growth</th>
+                <th scope="col">End</th>
               </tr>
             </thead>
             <tbody>
