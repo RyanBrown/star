@@ -150,7 +150,7 @@ body {
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .mds-toggle .mds-switch:checked + .mds-toggle-track .mds-toggle-thumb {
-    left: 22px;
+    left: 20px;
     color: var(--accent);
 }
 .mds-toggle:hover .mds-toggle-track {
