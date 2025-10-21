@@ -7,6 +7,7 @@
     "build": "tsx ./build-all.mts",
     "serve": "serve -s ./assets -p 4444 --cors",
     "dev": "vite --config vite.config.mts",
+    "dev:mock": "tsx ./mock-estimate.mts",
     "tsc": "tsc -b",
     "tsc:app": "tsc -p tsconfig.app.json",
     "tsc:node": "tsc -p tsconfig.node.json",
