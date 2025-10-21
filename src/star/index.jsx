@@ -91,6 +91,18 @@ function App() {
   // Canvas ref
   const canvasRef = React.useRef(null);
 
+  function fillDefaults() {
+    setAge("35");
+    setRetirementAge("65");
+    setAnnualSalaryInput(formatCurrencyUSD2(120000));
+    setCurrentSavingsInput(formatCurrencyUSD2(50000));
+    setAnnualContributionPct("10");
+    setAssumedAnnualReturnPct("6");
+    setEmployerMatchEnabled(true);
+    setMatchUpToPct("6");
+    setMatchRatePct("5");
+  }
+
   // Hydrate from Apps host payload if present
   React.useEffect(() => {
     const incoming = window.OPENAI_WIDGET_DATA || null;
@@ -175,8 +187,17 @@ function App() {
   return (
     <div className="mds-card" data-widget="star-retirement">
       <div className="mds-header">
-        <div className="mds-title">starGPT • Retirement Estimator</div>
-        <div className="mds-badge">ChatGPT-native UI</div>
+        <div className="mds-title">Retirement Estimator</div>
+        <div className="flex items-center gap-2">
+          <div className="mds-badge">ChatGPT-native UI</div>
+          <button
+            type="button"
+            className="inline-flex items-center rounded-full bg-[#F46C21] text-white px-2.5 py-1 text-xs font-medium ring ring-black/5 hover:opacity-90 active:opacity-100"
+            onClick={fillDefaults}
+          >
+            Fill defaults
+          </button>
+        </div>
       </div>
 
       <form id="star-form" className="mds-form" onSubmit={(e) => e.preventDefault()}>
