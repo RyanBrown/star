@@ -148,7 +148,7 @@ function App() {
     setAssumedAnnualReturnPct("6");
     setEmployerMatchEnabled(true);
     setMatchUpToPct("6");
-    setMatchRatePct("5");
+    setMatchRatePct("3");
   }
 
   // Hydrate from Apps host payload if present (ChatGPT Developer Mode)
@@ -437,7 +437,7 @@ function App() {
                   min="0"
                   max="200"
                   step="1"
-                  placeholder="e.g., 5"
+                  placeholder="e.g., 3"
                   value={matchRatePct}
                   onChange={(e) => setMatchRatePct(e.target.value)}
                 />
