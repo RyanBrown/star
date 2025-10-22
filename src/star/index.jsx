@@ -31,14 +31,13 @@ function currency(n) {
 }
 
 function formatCurrencyUSD2(value) {
-  // Return empty string for non-numeric inputs so empty fields stay blank
+  // Format as grouped decimal with 2 fraction digits, no currency symbol
   const num = typeof value === "string" ? Number(value) : value;
   if (!Number.isFinite(num)) return "";
   return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+    useGrouping: true,
   }).format(num);
 }
 
@@ -304,11 +303,11 @@ function App() {
             <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-black/60 text-sm">$</span>
             <input
               id="annualSalary"
-              className="mds-input pl-7"
+              className="mds-input !pl-5"
               name="annualSalary"
               type="text"
               inputMode="decimal"
-              placeholder="$120,000.00"
+              placeholder="120,000.00"
               value={annualSalaryInput}
               onChange={(e) => setAnnualSalaryInput(e.target.value)}
               onBlur={() => onCurrencyBlur(annualSalaryInput, setAnnualSalaryInput)}
@@ -322,11 +321,11 @@ function App() {
             <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-black/60 text-sm">$</span>
             <input
               id="currentSavings"
-              className="mds-input pl-7"
+              className="mds-input !pl-5"
               name="currentSavings"
               type="text"
               inputMode="decimal"
-              placeholder="$50,000.00"
+              placeholder="50,000.00"
               value={currentSavingsInput}
               onChange={(e) => setCurrentSavingsInput(e.target.value)}
               onBlur={() => onCurrencyBlur(currentSavingsInput, setCurrentSavingsInput)}
@@ -341,7 +340,7 @@ function App() {
           <div className="relative">
             <input
               id="annualContributionPct"
-              className="mds-input pr-8"
+              className="mds-input !pr-8"
               name="annualContributionPct"
               type="number"
               min="0"
@@ -397,7 +396,7 @@ function App() {
               <div className="relative">
                 <input
                   id="matchUpToPct"
-                  className="mds-input pr-8"
+                  className="mds-input !pr-8"
                   name="matchUpToPct"
                   type="number"
                   min="0"
@@ -415,7 +414,7 @@ function App() {
               <div className="relative">
                 <input
                   id="matchRatePct"
-                  className="mds-input pr-8"
+                  className="mds-input !pr-8"
                   name="matchRatePct"
                   type="number"
                   min="0"
@@ -427,6 +426,7 @@ function App() {
                 />
                 <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black/60 text-sm">%</span>
               </div>
+              <div className="mds-footnote" id="retire-note">Typical match ~3 up to 6%.</div>
             </div>
           </fieldset>
         )}
