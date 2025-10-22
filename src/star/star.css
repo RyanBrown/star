@@ -29,49 +29,49 @@
     box-sizing: border-box;
 }
 body {
-    margin: 0;
     background: transparent;
+    color-scheme: light dark;
     color: inherit;
     font-family: 'FS Pro', 'SF Pro', 'SF Pro Text', 'SF Pro Display', ui-sans-serif, system-ui, -apple-system,
         BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-    color-scheme: light dark;
+    margin: 0;
 }
 
 .mds-card {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
     border-radius: var(--radius);
-    padding: 16px;
+    border: 1px solid var(--border-subtle);
     box-shadow: var(--shadow);
+    padding: 16px;
 }
 
 .mds-header {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
+    display: flex;
     gap: 12px;
+    justify-content: space-between;
     margin-bottom: 8px;
 }
 .mds-title {
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.2px;
-    font-size: 16px;
 }
 .mds-badge {
     background: var(--bg-surface-2);
-    color: var(--muted);
-    padding: 4px 8px;
     border-radius: var(--radius-pill);
-    font-size: 12px;
     border: 1px solid var(--border-subtle);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 8px;
 }
 
 .mds-form {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
-    margin-top: 6px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin-bottom: 6px;
+    margin-top: 6px;
 }
 .mds-field {
     display: flex;
@@ -79,21 +79,21 @@ body {
     gap: 6px;
 }
 .mds-label {
-    font-size: 12px;
     color: var(--muted);
+    font-size: 12px;
     font-weight: 600;
 }
 .mds-input,
 .mds-select {
-    width: 100%;
-    min-height: 40px;
-    padding: 10px 12px;
+    background: var(--bg-surface);
     border-radius: var(--radius);
     border: 1px solid var(--border-subtle);
-    background: var(--bg-surface);
     color: inherit;
+    min-height: 40px;
+    padding: 10px 12px;
     transition: background-color var(--transition-fast), border-color var(--transition-fast),
         box-shadow var(--transition-fast);
+    width: 100%;
 }
 .mds-input:hover,
 .mds-select:hover {
@@ -106,52 +106,52 @@ body {
     outline-offset: 1px;
 }
 .mds-switch-row {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: 8px;
     padding: 8px 0;
 }
 .mds-toggle {
-    display: inline-flex;
     align-items: center;
-    gap: 10px;
     cursor: pointer;
+    display: inline-flex;
+    gap: 10px;
 }
 .mds-toggle .mds-switch {
-    position: absolute;
-    opacity: 0;
-    width: 0;
     height: 0;
+    opacity: 0;
+    position: absolute;
+    width: 0;
 }
 .mds-toggle-track {
-    position: relative;
-    width: 42px;
-    height: 24px;
-    border-radius: 999px;
     background: var(--bg-surface-2);
+    border-radius: 999px;
     border: 1px solid var(--border-subtle);
+    height: 24px;
+    position: relative;
     transition: background-color var(--transition-fast), border-color var(--transition-fast),
         box-shadow var(--transition-fast);
+    width: 42px;
 }
 .mds-toggle-thumb {
+    background: currentColor;
+    border-radius: 50%;
+    color: var(--muted);
+    height: 18px;
+    left: 2px;
     position: absolute;
     top: 50%;
-    left: 2px;
     transform: translate(0, -50%);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: currentColor;
-    color: var(--muted);
     transition: left var(--transition-fast), color var(--transition-fast);
+    width: 18px;
 }
 .mds-toggle .mds-switch:checked + .mds-toggle-track {
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .mds-toggle .mds-switch:checked + .mds-toggle-track .mds-toggle-thumb {
-    left: 20px;
     color: var(--accent);
+    left: 20px;
 }
 .mds-toggle:hover .mds-toggle-track {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
@@ -162,8 +162,8 @@ body {
 .mds-toggle .mds-switch:disabled + .mds-toggle-track,
 .mds-toggle .mds-switch:disabled + .mds-toggle-track .mds-toggle-thumb,
 .mds-toggle .mds-switch:disabled ~ .mds-toggle-text {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
 }
 @media (prefers-reduced-motion: reduce) {
     .mds-toggle-track {
@@ -174,8 +174,8 @@ body {
     }
 }
 .mds-toggle-text {
-    user-select: none;
     font-weight: 600;
+    user-select: none;
 }
 
 .mds-actions {
@@ -184,13 +184,13 @@ body {
     margin-top: 4px;
 }
 .mds-btn {
-    min-height: 40px;
-    padding: 10px 14px;
+    background: transparent;
     border-radius: var(--radius);
     border: 1px solid var(--border-subtle);
-    background: transparent;
     color: inherit;
     cursor: pointer;
+    min-height: 40px;
+    padding: 10px 14px;
     transition: background-color var(--transition-fast), border-color var(--transition-fast),
         box-shadow var(--transition-fast), transform var(--transition-fast);
 }
@@ -216,38 +216,38 @@ body {
 
 .mds-summary {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
     margin-top: 10px;
 }
 .mds-kpi {
-    padding: 10px;
-    border: 1px dashed var(--grid);
-    border-radius: var(--radius);
     background: transparent;
+    border-radius: var(--radius);
+    border: 1px dashed var(--grid);
+    padding: 10px;
 }
 .mds-kpi .k {
-    font-size: 11px;
     color: var(--muted);
+    font-size: 11px;
     margin-bottom: 4px;
 }
 .mds-kpi .v {
-    font-weight: 700;
     font-size: 15px;
+    font-weight: 700;
 }
 
 .mds-chart {
-    width: 100%;
-    height: 260px;
-    border: 1px solid var(--grid);
     border-radius: var(--radius);
+    border: 1px solid var(--grid);
+    height: 260px;
     margin-top: 12px;
-    position: relative;
     overflow: hidden;
+    position: relative;
+    width: 100%;
 }
 .mds-chart canvas {
-    width: 100%;
     height: 100%;
+    width: 100%;
 }
 
 /* Responsive behavior */
@@ -273,19 +273,19 @@ body {
 }
 
 .mds-table {
-    width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-    overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--grid);
+    margin-top: 10px;
+    overflow: hidden;
+    width: 100%;
 }
 .mds-table th,
 .mds-table td {
-    font-size: 12px;
-    text-align: right;
-    padding: 8px 10px;
     border-bottom: 1px solid var(--grid);
+    font-size: 12px;
+    padding: 8px 10px;
+    text-align: right;
 }
 .mds-table th:first-child,
 .mds-table td:first-child {
