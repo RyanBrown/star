@@ -117,6 +117,23 @@ function App() {
   /** @type {[ReturnType<typeof buildPayloadFromForm>|null, React.Dispatch<React.SetStateAction<ReturnType<typeof buildPayloadFromForm>|null>>]} */
   const [lastEstimated, setLastEstimated] = React.useState(null);
 
+  const tableSubheading = React.useMemo(() => {
+    const ageStr = retirementAge && Number(retirementAge) > 0 ? String(retirementAge) : "—";
+    const contribStr = annualContributionPct !== "" ? `${annualContributionPct}%` : "—%";
+    const matchStr = employerMatchEnabled
+      ? `${matchRatePct !== "" ? matchRatePct : "—"}% employer match${matchUpToPct !== "" ? ` up to ${matchUpToPct}%` : ""
+      }`
+      : "no employer match";
+    return `At age ${ageStr}, saving ${contribStr} with ${matchStr}`;
+  }, [retirementAge, annualContributionPct, employerMatchEnabled, matchRatePct, matchUpToPct]);
+
+  // Simple monthly payout estimate using a 4% annual withdrawal rule
+  const monthlyPayout = React.useMemo(() => {
+    if (!summary) return null;
+    const annual = Math.max(0, Math.round(summary.endingBalance * 0.04));
+    return Math.max(0, Math.round(annual / 12));
+  }, [summary]);
+
   // Canvas ref
   /** @type {React.MutableRefObject<HTMLCanvasElement|null>} */
   const canvasRef = React.useRef(null);
@@ -457,6 +474,16 @@ function App() {
         )}
       </div>
 
+      {summary ? (
+        <div className="mds-table-container" aria-live="polite">
+          Your estimated retirement income
+          <br />
+          {tableSubheading}
+          <br />
+          <h1>{monthlyPayout != null ? `${currency(monthlyPayout)}/month` : "—/month"}</h1>
+        </div>
+      ) : null}
+
       <div className={"mds-chart " + (rows.length === 0 ? "hidden" : "")} aria-hidden={rows.length === 0}>
         <canvas id="chart" ref={canvasRef} role="img" aria-label="Retirement savings projection line chart"></canvas>
       </div>
@@ -464,7 +491,6 @@ function App() {
       <table id="table" className="mds-table" role="table" aria-label="Retirement projection table">
         {rows.length > 0 && (
           <>
-            <caption className="mds-footnote">Annual balances and contributions by year</caption>
             <thead>
               <tr>
                 <th scope="col">Year</th>
@@ -492,10 +518,6 @@ function App() {
           </>
         )}
       </table>
-
-      <div className="mds-footnote">
-        Assumptions: annual compounding at end of year; contributions once per year; match applies to the smaller of employee % vs match-up-to %. Values are illustrative.
-      </div>
     </div>
   );
 }
