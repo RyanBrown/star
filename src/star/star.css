@@ -57,13 +57,12 @@ body {
     font-weight: 700;
     letter-spacing: 0.2px;
 }
-.mds-badge {
-    background: var(--bg-surface-2);
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-subtle);
+.mds-subtitle {
     color: var(--muted);
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    margin-bottom: 12px;
 }
 
 .mds-form {
@@ -294,5 +293,4 @@ body {
 .mds-footnote {
     color: var(--muted);
     font-size: 12px;
-    margin-top: 6px;
 }

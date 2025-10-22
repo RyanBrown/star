@@ -254,9 +254,11 @@ function App() {
   return (
     <div className="mds-card" data-widget="star-retirement">
       <div className="mds-header">
-        <div className="mds-title" id="star-title">Retirement Estimator</div>
+        <div className="flex flex-col items-start gap-1">
+          <div className="mds-title" id="star-title">Estimate your retirement income</div>
+          <div className="mds-subtitle">We'll use these inputs to model your retirement. Morningstar doesn't store your data.</div>
+        </div>
         <div className="flex items-center gap-2">
-          <div className="mds-badge">ChatGPT-native UI</div>
           <button
             type="button"
             className="inline-flex items-center rounded-full bg-[#F46C21] text-white px-2.5 py-1 text-xs font-medium ring ring-black/5 hover:opacity-90 active:opacity-100"
@@ -269,7 +271,7 @@ function App() {
 
       <form id="star-form" className="mds-form" aria-labelledby="star-title" onSubmit={(e) => e.preventDefault()}>
         <div className="mds-field">
-          <label className="mds-label" htmlFor="age">Current Age</label>
+          <label className="mds-label" htmlFor="age">Age</label>
           <input
             id="age"
             className="mds-input"
@@ -297,67 +299,79 @@ function App() {
           <div className="mds-footnote" id="retire-note">We'll mark this on the chart.</div>
         </div>
         <div className="mds-field">
-          <label className="mds-label" htmlFor="annualSalary">Annual Salary (USD)</label>
-          <input
-            id="annualSalary"
-            className="mds-input"
-            name="annualSalary"
-            type="text"
-            inputMode="decimal"
-            placeholder="$120,000.00"
-            value={annualSalaryInput}
-            onChange={(e) => setAnnualSalaryInput(e.target.value)}
-            onBlur={() => onCurrencyBlur(annualSalaryInput, setAnnualSalaryInput)}
-            onFocus={(e) => e.currentTarget.select()}
-          />
+          <label className="mds-label" htmlFor="annualSalary">Annual Salary</label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-black/60 text-sm">$</span>
+            <input
+              id="annualSalary"
+              className="mds-input pl-7"
+              name="annualSalary"
+              type="text"
+              inputMode="decimal"
+              placeholder="$120,000.00"
+              value={annualSalaryInput}
+              onChange={(e) => setAnnualSalaryInput(e.target.value)}
+              onBlur={() => onCurrencyBlur(annualSalaryInput, setAnnualSalaryInput)}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          </div>
         </div>
         <div className="mds-field">
-          <label className="mds-label" htmlFor="currentSavings">Current Retirement Savings (USD)</label>
-          <input
-            id="currentSavings"
-            className="mds-input"
-            name="currentSavings"
-            type="text"
-            inputMode="decimal"
-            placeholder="$50,000.00"
-            value={currentSavingsInput}
-            onChange={(e) => setCurrentSavingsInput(e.target.value)}
-            onBlur={() => onCurrencyBlur(currentSavingsInput, setCurrentSavingsInput)}
-            onFocus={(e) => e.currentTarget.select()}
-            aria-describedby="savings-note"
-          />
+          <label className="mds-label" htmlFor="currentSavings">Current Retirement Savings</label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-black/60 text-sm">$</span>
+            <input
+              id="currentSavings"
+              className="mds-input pl-7"
+              name="currentSavings"
+              type="text"
+              inputMode="decimal"
+              placeholder="$50,000.00"
+              value={currentSavingsInput}
+              onChange={(e) => setCurrentSavingsInput(e.target.value)}
+              onBlur={() => onCurrencyBlur(currentSavingsInput, setCurrentSavingsInput)}
+              onFocus={(e) => e.currentTarget.select()}
+              aria-describedby="savings-note"
+            />
+          </div>
           <div className="mds-footnote" id="savings-note">401(k), IRA, etc.</div>
         </div>
         <div className="mds-field">
-          <label className="mds-label" htmlFor="annualContributionPct">Employee Contribution (% of salary)</label>
-          <input
-            id="annualContributionPct"
-            className="mds-input"
-            name="annualContributionPct"
-            type="number"
-            min="0"
-            max="100"
-            step="1"
-            placeholder="e.g., 10"
-            value={annualContributionPct}
-            onChange={(e) => setAnnualContributionPct(e.target.value)}
-          />
+          <label className="mds-label" htmlFor="annualContributionPct">You Contribute</label>
+          <div className="relative">
+            <input
+              id="annualContributionPct"
+              className="mds-input pr-8"
+              name="annualContributionPct"
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              placeholder="e.g., 10"
+              value={annualContributionPct}
+              onChange={(e) => setAnnualContributionPct(e.target.value)}
+            />
+            <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black/60 text-sm">%</span>
+          </div>
         </div>
-        <div className="mds-field">
+        {/* <div className="mds-field">
           <label className="mds-label" htmlFor="assumedAnnualReturnPct">Assumed Annual Return (%)</label>
-          <input
-            id="assumedAnnualReturnPct"
-            className="mds-input"
-            name="assumedAnnualReturnPct"
-            type="number"
-            min="0"
-            max="20"
-            step="0.5"
-            placeholder="e.g., 6"
-            value={assumedAnnualReturnPct}
-            onChange={(e) => setAssumedAnnualReturnPct(e.target.value)}
-          />
-        </div>
+          <div className="relative">
+            <input
+              id="assumedAnnualReturnPct"
+              className="mds-input pr-8"
+              name="assumedAnnualReturnPct"
+              type="number"
+              min="0"
+              max="20"
+              step="0.5"
+              placeholder="e.g., 6"
+              value={assumedAnnualReturnPct}
+              onChange={(e) => setAssumedAnnualReturnPct(e.target.value)}
+            />
+            <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black/60 text-sm">%</span>
+          </div>
+        </div> */}
 
         <div className="mds-field" style={{ gridColumn: "span 3" }}>
           <div className="mds-switch-row">
@@ -378,36 +392,41 @@ function App() {
         {employerMatchEnabled && (
           // Group employer match fields in a lightly elevated section
           <fieldset className="antialiased w-full text-black bg-black/3 dark:bg-white/3 rounded-lg p-3" aria-labelledby="employer-match-legend">
-            <legend id="employer-match-legend" className="mds-label">Employer match options</legend>
             <div className="mds-field">
-              <label className="mds-label" htmlFor="matchUpToPct">Matches up to (% of salary)</label>
-              <input
-                id="matchUpToPct"
-                className="mds-input"
-                name="matchUpToPct"
-                type="number"
-                min="0"
-                max="100"
-                step="1"
-                placeholder="e.g., 6"
-                value={matchUpToPct}
-                onChange={(e) => setMatchUpToPct(e.target.value)}
-              />
+              <label className="mds-label" htmlFor="matchUpToPct">Matches up to:</label>
+              <div className="relative">
+                <input
+                  id="matchUpToPct"
+                  className="mds-input pr-8"
+                  name="matchUpToPct"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  placeholder="e.g., 6"
+                  value={matchUpToPct}
+                  onChange={(e) => setMatchUpToPct(e.target.value)}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black/60 text-sm">%</span>
+              </div>
             </div>
             <div className="mds-field">
-              <label className="mds-label" htmlFor="matchRatePct">Match Rate (%)</label>
-              <input
-                id="matchRatePct"
-                className="mds-input"
-                name="matchRatePct"
-                type="number"
-                min="0"
-                max="200"
-                step="1"
-                placeholder="e.g., 5"
-                value={matchRatePct}
-                onChange={(e) => setMatchRatePct(e.target.value)}
-              />
+              <label className="mds-label" htmlFor="matchRatePct">Match Rate:</label>
+              <div className="relative">
+                <input
+                  id="matchRatePct"
+                  className="mds-input pr-8"
+                  name="matchRatePct"
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  placeholder="e.g., 5"
+                  value={matchRatePct}
+                  onChange={(e) => setMatchRatePct(e.target.value)}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black/60 text-sm">%</span>
+              </div>
             </div>
           </fieldset>
         )}
