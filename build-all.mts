@@ -24,6 +24,7 @@ const targets: string[] = [
   "star",
   "line-graph",
   "table-card",
+  "table-graph"
 ];
 const builtNames: string[] = [];
 
