@@ -105,6 +105,15 @@ widgets: List[PizzazWidget] = [
         html=_load_widget_html("table-card"),
         response_text="Rendered a pizza table card!",
     ),
+    PizzazWidget(
+        identifier="pizza-table-graph",
+        title="Show Pizza Table Graph",
+        template_uri="ui://widget/pizza-table-graph.html",
+        invoking="Hand-tossing a table graph",
+        invoked="Served a fresh table graph",
+        html=_load_widget_html("table-graph"),
+        response_text="Rendered a pizza table graph!",
+    ),
 ]
 
 

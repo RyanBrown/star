@@ -148,6 +148,15 @@ const widgets: PizzazWidget[] = [
     html: readWidgetHtml("table-card"),
     responseText: "Rendered a pizza table card!",
   },
+  {
+    id: "pizza-table-graph",
+    title: "Show Pizza Table Graph",
+    templateUri: "ui://widget/pizza-table-graph.html",
+    invoking: "Hand-tossing a table graph",
+    invoked: "Served a fresh table graph",
+    html: readWidgetHtml("table-graph"),
+    responseText: "Rendered a pizza table graph!",
+  },
 ];
 
 const widgetsById = new Map<string, PizzazWidget>();

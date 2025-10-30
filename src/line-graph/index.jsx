@@ -459,7 +459,10 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("line-graph-root")).render(<App />);
+const lgEl = document.getElementById("line-graph-root");
+if (lgEl) {
+  createRoot(lgEl).render(<App />);
+}
 
 export { App };
 export default App;
