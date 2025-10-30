@@ -130,6 +130,24 @@ const widgets: PizzazWidget[] = [
     html: readWidgetHtml("star"),
     responseText: "Rendered retirement estimator!",
   },
+  {
+    id: "pizza-line-graph",
+    title: "Show Pizza Line Graph",
+    templateUri: "ui://widget/pizza-line-graph.html",
+    invoking: "Plotting a pizza line graph",
+    invoked: "Rendered a pizza line graph",
+    html: readWidgetHtml("line-graph"),
+    responseText: "Rendered a pizza line graph!",
+  },
+  {
+    id: "pizza-table-card",
+    title: "Show Pizza Table Card",
+    templateUri: "ui://widget/pizza-table-card.html",
+    invoking: "Hand-tossing a table card",
+    invoked: "Served a fresh table card",
+    html: readWidgetHtml("table-card"),
+    responseText: "Rendered a pizza table card!",
+  },
 ];
 
 const widgetsById = new Map<string, PizzazWidget>();
@@ -348,17 +366,6 @@ function createPizzazServer(): Server {
   server.setRequestHandler(
     CallToolRequestSchema,
     async (request: CallToolRequest) => {
-      if (request.params.name === "estimate_retirement") {
-        if (!starWidget) throw new Error("Star widget not registered");
-        const args = estimateInputParser.parse(request.params.arguments ?? {});
-        const result = estimate(args);
-        return {
-          content: [],
-          structuredContent: result,
-          _meta: widgetMeta(starWidget),
-        };
-      }
-
       const widget = widgetsById.get(request.params.name);
       if (!widget) throw new Error(`Unknown tool: ${request.params.name}`);
       const args = toolInputParser.parse(request.params.arguments ?? {});

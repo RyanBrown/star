@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "savingRate": "10%",
+      "income": "$62,000",
+      "lifestyle": "Thrifty"
+    },
+    {
+      "savingRate": "15%",
+      "income": "$68,000",
+      "lifestyle": "Comfortable"
+    },
+    {
+      "savingRate": "18%",
+      "income": "$73,000",
+      "lifestyle": "Lavish"
+    }
+  ]
+}

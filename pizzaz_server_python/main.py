@@ -88,13 +88,22 @@ widgets: List[PizzazWidget] = [
         response_text="Rendered a pizza list!",
     ),
     PizzazWidget(
-        identifier="retirement-income-estimator",
-        title="Retirement Income Estimator",
-        template_uri="ui://widget/retirement-income-estimator.html",
-        invoking="Preparing income estimator…",
-        invoked="Retirement income estimator ready.",
-        html=_load_widget_html("star"),
-        response_text="Rendered retirement income estimator!",
+        identifier="pizza-line-graph",
+        title="Retirement Account Growth Projection",
+        template_uri="ui://widget/pizza-line-graph.html",
+        invoking="Plotting a pizza line graph",
+        invoked="Rendered a pizza line graph",
+        html=_load_widget_html("line-graph"),
+        response_text="Rendered a pizza line graph!",
+    ),
+    PizzazWidget(
+        identifier="pizza-table-card",
+        title="Show Pizza Table Card",
+        template_uri="ui://widget/pizza-table-card.html",
+        invoking="Hand-tossing a table card",
+        invoked="Served a fresh table card",
+        html=_load_widget_html("table-card"),
+        response_text="Rendered a pizza table card!",
     ),
 ]
 
@@ -102,8 +111,12 @@ widgets: List[PizzazWidget] = [
 MIME_TYPE = "text/html+skybridge"
 
 
-WIDGETS_BY_ID: Dict[str, PizzazWidget] = {widget.identifier: widget for widget in widgets}
-WIDGETS_BY_URI: Dict[str, PizzazWidget] = {widget.template_uri: widget for widget in widgets}
+WIDGETS_BY_ID: Dict[str, PizzazWidget] = {
+    widget.identifier: widget for widget in widgets
+}
+WIDGETS_BY_URI: Dict[str, PizzazWidget] = {
+    widget.template_uri: widget for widget in widgets
+}
 
 
 class PizzaInput(BaseModel):
@@ -117,73 +130,6 @@ class PizzaInput(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True, extra="forbid")
 
-class RetirementIncomeEstimatorInput(BaseModel):
-    """Schema for retirement estimator tool matching UI field names.
-
-    Percent inputs are provided as fractions (e.g., 0.06 for 6%).
-    """
-
-    age: int = Field(
-        ...,
-        alias="age",
-        description="Current age.",
-        ge=0,
-        le=110,
-    )
-    retirement_age: int = Field(
-        ...,
-        alias="retirementAge",
-        description="Target retirement age.",
-        ge=0,
-        le=110,
-    )
-    annual_salary: float = Field(
-        ...,
-        alias="annualSalary",
-        description="Annual salary amount.",
-        ge=0,
-    )
-    current_savings: float = Field(
-        ...,
-        alias="currentSavings",
-        description="Current retirement savings.",
-        ge=0,
-    )
-    annual_contribution_pct: float = Field(
-        ...,
-        alias="annualContributionPct",
-        description="Annual contribution as a fraction of salary (0-1).",
-        ge=0,
-        le=1,
-    )
-    employer_match: bool = Field(
-        ...,
-        alias="employerMatch",
-        description="Whether the employer matches contributions.",
-    )
-    match_up_to_pct: float = Field(
-        ...,
-        alias="matchUpToPct",
-        description="Maximum salary fraction eligible for employer match (0-1).",
-        ge=0,
-        le=1,
-    )
-    match_rate_pct: float = Field(
-        ...,
-        alias="matchRatePct",
-        description="Employer match rate as a fraction (0-1).",
-        ge=0,
-        le=1,
-    )
-    assumed_annual_return_pct: float = Field(
-        ...,
-        alias="assumedAnnualReturnPct",
-        description="Assumed annual return as a fraction (0-1).",
-        ge=0,
-        le=1,
-    )
-
-    model_config = ConfigDict(populate_by_name=True, extra="forbid")
 
 mcp = FastMCP(
     name="pizzaz-python",
@@ -203,74 +149,6 @@ TOOL_INPUT_SCHEMA: Dict[str, Any] = {
     "additionalProperties": False,
 }
 
-RETIREMENT_TOOL_INPUT_SCHEMA: Dict[str, Any] = {
-    "type": "object",
-    "properties": {
-        "age": {
-            "type": "number",
-            "description": "Current age.",
-            "minimum": 0,
-            "maximum": 110,
-        },
-        "retirementAge": {
-            "type": "number",
-            "description": "Target retirement age.",
-            "minimum": 0,
-            "maximum": 110,
-        },
-        "annualSalary": {
-            "type": "number",
-            "description": "Annual salary amount.",
-            "minimum": 0,
-        },
-        "currentSavings": {
-            "type": "number",
-            "description": "Current retirement savings.",
-            "minimum": 0,
-        },
-        "annualContributionPct": {
-            "type": "number",
-            "description": "Annual contribution as a fraction of salary (0-1).",
-            "minimum": 0,
-            "maximum": 1,
-        },
-        "employerMatch": {
-            "type": "boolean",
-            "description": "Whether the employer matches contributions.",
-        },
-        "matchUpToPct": {
-            "type": "number",
-            "description": "Maximum salary fraction eligible for employer match (0-1).",
-            "minimum": 0,
-            "maximum": 1,
-        },
-        "matchRatePct": {
-            "type": "number",
-            "description": "Employer match rate as a fraction (0-1).",
-            "minimum": 0,
-            "maximum": 1,
-        },
-        "assumedAnnualReturnPct": {
-            "type": "number",
-            "description": "Assumed annual return as a fraction (0-1).",
-            "minimum": 0,
-            "maximum": 1,
-        },
-    },
-    "required": [
-        "age",
-        "retirementAge",
-        "annualSalary",
-        "currentSavings",
-        "annualContributionPct",
-        "employerMatch",
-        "matchUpToPct",
-        "matchRatePct",
-        "assumedAnnualReturnPct",
-    ],
-    "additionalProperties": False,
-}
-
 
 def _resource_description(widget: PizzazWidget) -> str:
     return f"{widget.title} widget markup"
@@ -282,7 +160,7 @@ def _tool_meta(widget: PizzazWidget) -> Dict[str, Any]:
         "openai/toolInvocation/invoking": widget.invoking,
         "openai/toolInvocation/invoked": widget.invoked,
         "openai/widgetAccessible": True,
-        "openai/resultCanProduceWidget": True
+        "openai/resultCanProduceWidget": True,
     }
 
 
@@ -371,99 +249,6 @@ async def _handle_read_resource(req: types.ReadResourceRequest) -> types.ServerR
 
 
 async def _call_tool_request(req: types.CallToolRequest) -> types.ServerResult:
-    # Handle retirement estimator tool separately
-    if req.params.name == "estimate_retirement":
-        arguments = req.params.arguments or {}
-        try:
-            payload = RetirementIncomeEstimatorInput.model_validate(arguments)
-        except ValidationError as exc:
-            return types.ServerResult(
-                types.CallToolResult(
-                    content=[
-                        types.TextContent(
-                            type="text",
-                            text=f"Input validation error: {exc.errors()}",
-                        )
-                    ],
-                    isError=True,
-                )
-            )
-
-        # Compute estimate mirroring mock-estimate.mts
-        age = int(payload.age)
-        retirement_age = int(payload.retirement_age)
-        annual_salary = float(payload.annual_salary)
-        current_savings = max(0.0, float(payload.current_savings))
-        contrib_pct = max(0.0, float(payload.annual_contribution_pct))
-        employer_match = bool(payload.employer_match)
-        match_up_to_pct = max(0.0, float(payload.match_up_to_pct))
-        match_rate_pct = max(0.0, float(payload.match_rate_pct))
-        annual_return = max(0.0, float(payload.assumed_annual_return_pct))
-
-        years = max(0, round(retirement_age - age))
-        start = current_savings
-        total_employee_contrib = 0.0
-        total_employer_match = 0.0
-        points: List[Dict[str, Any]] = []
-
-        for i in range(years):
-            year = i + 1
-            age_this_year = age + year
-            employee_contribution = max(0.0, annual_salary * contrib_pct)
-            capped_pct = min(contrib_pct, match_up_to_pct)
-            employer_base = max(0.0, annual_salary * capped_pct)
-            employer = employer_base * match_rate_pct if employer_match else 0.0
-            growth = max(0.0, (start + employee_contribution + employer) * annual_return)
-            end_balance = start + employee_contribution + employer + growth
-
-            points.append(
-                {
-                    "year": year,
-                    "age": age_this_year,
-                    "startBalance": int(round(start)),
-                    "employeeContribution": int(round(employee_contribution)),
-                    "employerMatch": int(round(employer)),
-                    "growth": int(round(growth)),
-                    "endBalance": int(round(end_balance)),
-                }
-            )
-
-            total_employee_contrib += employee_contribution
-            total_employer_match += employer
-            start = end_balance
-
-        summary = {
-            "years": years,
-            "endingBalance": int(round(start)),
-            "totalEmployeeContrib": int(round(total_employee_contrib)),
-            "totalEmployerMatch": int(round(total_employer_match)),
-        }
-
-        star_widget = WIDGETS_BY_ID.get("retirement-income-estimator") or widgets[4]
-        widget_resource = _embedded_widget_resource(star_widget)
-        meta: Dict[str, Any] = {
-            "openai.com/widget": widget_resource.model_dump(mode="json"),
-            "openai/outputTemplate": star_widget.template_uri,
-            "openai/toolInvocation/invoking": star_widget.invoking,
-            "openai/toolInvocation/invoked": star_widget.invoked,
-            "openai/widgetAccessible": True,
-            "openai/resultCanProduceWidget": True,
-        }
-
-        return types.ServerResult(
-            types.CallToolResult(
-                content=[
-                    types.TextContent(
-                        type="text",
-                        text=star_widget.response_text,
-                    )
-                ],
-                structuredContent={"summary": summary, "points": points},
-                _meta=meta,
-            )
-        )
-
-    # Default: treat as a pizza widget tool
     widget = WIDGETS_BY_ID.get(req.params.name)
     if widget is None:
         return types.ServerResult(
