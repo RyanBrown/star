@@ -73,8 +73,11 @@ function App() {
 
       {/* Price Point Display */}
       <div style={{ marginBottom: "24px" }}>
-        <div style={{ fontSize: "32px", fontWeight: "700", marginBottom: "16px" }}>
-          Price Point: {currency(pricePoint)}
+        <div style={{ fontSize: "32px", fontWeight: "700", marginBottom: "8px" }}>
+          Price Point: {currency(income)}
+        </div>
+        <div style={{ fontSize: "14px", color: "var(--muted)", marginBottom: "16px" }}>
+          {currency(Math.round(income / 12))}/month
         </div>
 
         {/* Slider */}
@@ -206,15 +209,25 @@ function App() {
 
             <div className="mds-field">
               <label className="mds-label" htmlFor="savingsPerPaycheck">Savings per paycheck</label>
-              <input
-                id="savingsPerPaycheck"
-                className="mds-input"
-                type="number"
-                min="0"
-                step="50"
-                value={savingsPerPaycheck}
-                onChange={(e) => setSavingsPerPaycheck(Number(e.target.value))}
-              />
+              <div style={{ position: "relative" }}>
+                <span style={{
+                  position: "absolute",
+                  left: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
+                  color: "var(--muted)"
+                }}>$</span>
+                <input
+                  id="savingsPerPaycheck"
+                  className="mds-input"
+                  type="text"
+                  inputMode="numeric"
+                  value={formatCurrency(savingsPerPaycheck)}
+                  onChange={(e) => setSavingsPerPaycheck(parseCurrencyToNumber(e.target.value))}
+                  style={{ paddingLeft: "24px" }}
+                />
+              </div>
             </div>
 
             <div className="mds-field">
