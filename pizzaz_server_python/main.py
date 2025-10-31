@@ -114,6 +114,15 @@ widgets: List[PizzazWidget] = [
         html=_load_widget_html("table-graph"),
         response_text="Rendered a pizza table graph!",
     ),
+    PizzazWidget(
+        identifier="star-form",
+        title="Star Form Demo",
+        template_uri="ui://widget/star-form.html",
+        invoking="Preparing star form",
+        invoked="Star form ready",
+        html=_load_widget_html("star-form"),
+        response_text="Rendered star form!",
+    ),
 ]
 
 
