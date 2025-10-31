@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "../star/star.css";
+import { RangeSlider } from "./range-slider";
 
 // Currency formatting utilities
 function currency(n) {
@@ -82,50 +83,17 @@ function App() {
 
         {/* Slider */}
         <div style={{ position: "relative", marginBottom: "16px" }}>
-          <input
-            type="range"
-            min="0"
-            max="300000"
-            step="1000"
+          <RangeSlider
             value={income}
             onChange={(e) => setIncome(Number(e.target.value))}
-            style={{
-              width: "100%",
-              height: "6px",
-              borderRadius: "3px",
-              background: `linear-gradient(to right, #000 0%, #000 ${(income / 300000) * 100}%, #e0e0e0 ${(income / 300000) * 100}%, #e0e0e0 100%)`,
-              outline: "none",
-              WebkitAppearance: "none",
-              appearance: "none",
-            }}
+            min={0}
+            max={300000}
+            step={1000}
+            progressColor="#000"
+            trackColor="#e0e0e0"
+            progressColorDark="#fff"
+            trackColorDark="#444"
           />
-          <style>{`
-            input[type="range"]::-webkit-slider-thumb {
-              -webkit-appearance: none;
-              appearance: none;
-              width: 24px;
-              height: 24px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              border: 2px solid #ddd;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            }
-            input[type="range"]::-moz-range-thumb {
-              width: 24px;
-              height: 24px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              border: 2px solid #ddd;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            }
-            @media (prefers-color-scheme: dark) {
-              input[type="range"] {
-                background: linear-gradient(to right, #fff 0%, #fff ${(income / 300000) * 100}%, #444 ${(income / 300000) * 100}%, #444 100%) !important;
-              }
-            }
-          `}</style>
         </div>
 
         {/* Monthly Payment Display */}
@@ -133,7 +101,7 @@ function App() {
           I'm comfortable saving <span style={{
             fontWeight: "600",
             borderBottom: "2px solid currentColor"
-          }}>{currency(monthlyPayment)}</span> per month form my retirement
+          }}>{currency(monthlyPayment)}</span> per month for my retirement
         </div>
       </div>
 
