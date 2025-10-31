@@ -74,14 +74,14 @@ function App() {
       {/* Price Point Display */}
       <div style={{ marginBottom: "24px" }}>
         <div style={{ fontSize: "32px", fontWeight: "700", marginBottom: "8px" }}>
-          Price Point: {currency(income)}
+          Annual Income{currency(income)}
         </div>
         <div style={{ fontSize: "14px", color: "var(--muted)", marginBottom: "16px" }}>
           {currency(Math.round(income / 12))}/month
         </div>
 
         {/* Slider */}
-        <div style={{ position: "relative", marginBottom: "12px" }}>
+        <div style={{ position: "relative", marginBottom: "16px" }}>
           <input
             type="range"
             min="0"
@@ -130,10 +130,10 @@ function App() {
 
         {/* Monthly Payment Display */}
         <div style={{ fontSize: "16px", marginTop: "16px" }}>
-          I'm comfortable spending <span style={{
+          I'm comfortable saving <span style={{
             fontWeight: "600",
             borderBottom: "2px solid currentColor"
-          }}>{currency(monthlyPayment)}</span> per month
+          }}>{currency(monthlyPayment)}</span> per month form my retirement
         </div>
       </div>
 
